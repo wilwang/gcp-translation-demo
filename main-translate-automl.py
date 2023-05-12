@@ -24,8 +24,11 @@ def translate_document(request_config: object):
     mime_type = request_config["mime_type"]
     lang_code = request_config["lang_code"]
     output_path = request_config["output"]
+    source_lang_code = request_config["source_lang_code"]
+    model_id = request_config["model_id"]
     
     parent = f"projects/{project_id}/locations/{location}"
+    model = f"{parent}/models/{model_id}"
 
     # Supported file types: https://cloud.google.com/translate/docs/supported-formats
     with open(file_path, "rb") as document:
@@ -42,6 +45,10 @@ def translate_document(request_config: object):
             "parent": parent,
             "target_language_code": lang_code,
             "document_input_config": document_input_config,
+
+            # source language code is required when using a custom model
+            "source_language_code": source_lang_code,
+            "model": model
         }
     )
 
@@ -62,7 +69,9 @@ request_config = {
     'source': 'What is Cloud Translation.pdf',
     'mime_type': 'application/pdf',
     'lang_code': 'fr',
-    'output': 'What is Cloud Translation[fr].pdf'
+    'output': 'What is Cloud Translation[fr].pdf',
+    'source_lang_code': 'en',
+    'model_id': 'myautomlmodelid'
 }
 
 translate_document(request_config)
